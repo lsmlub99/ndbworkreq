@@ -1,6 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'login.dart'; // 로그인 페이지를 import 해주세요
+import 'package:firebase_auth/firebase_auth.dart';
+
+// UserProfile 클래스와 saveUserProfile 함수를 import 합니다.
+import '../models/profile.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -10,12 +13,12 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final emailController = TextEditingController(); // 이메일 입력 컨트롤러
-  final passController = TextEditingController(); // 비밀번호 입력 컨트롤러
-  final confirmPassController = TextEditingController(); // 비밀번호 확인 입력 컨트롤러
-  String errorString = ''; // 회원가입 에러 메시지
+  final emailController = TextEditingController();
+  final passController = TextEditingController();
+  final confirmPassController = TextEditingController();
+  final nicknameController = TextEditingController(); // 닉네임 입력 컨트롤러
+  String errorString = '';
 
-  // Firebase Auth 회원가입 함수
   void fireAuthSignUp(BuildContext context) async {
     try {
       if (passController.text != confirmPassController.text) {
@@ -29,6 +32,12 @@ class _SignupPageState extends State<SignupPage> {
           .createUserWithEmailAndPassword(
               email: emailController.text, password: passController.text);
       print("User signed up: ${userCredential.user}");
+
+      // 회원가입 성공 시 프로필 정보를 저장
+      await saveUserProfile(UserProfile(
+        userId: emailController.text,
+        nickname: nicknameController.text,
+      ));
 
       // 회원가입 성공 시 로그인 페이지로 이동
       Navigator.pushReplacement(
@@ -80,13 +89,21 @@ class _SignupPageState extends State<SignupPage> {
               ),
             ),
             const SizedBox(height: 20),
+            TextField(
+              controller: nicknameController,
+              decoration: const InputDecoration(
+                labelText: 'Nickname', // 닉네임 입력 필드 추가
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                fireAuthSignUp(context); // 회원가입 버튼 클릭
+                fireAuthSignUp(context);
               },
               child: const Text(
                 '회원가입',
-                style: TextStyle(fontSize: 18), // 버튼 폰트 크기 조정
+                style: TextStyle(fontSize: 18),
               ),
             ),
             const SizedBox(height: 20),
@@ -94,7 +111,7 @@ class _SignupPageState extends State<SignupPage> {
               errorString,
               style: const TextStyle(
                 color: Colors.red,
-                fontSize: 16, // 에러 텍스트 폰트 크기 조정
+                fontSize: 16,
               ),
             ),
           ],

@@ -57,85 +57,93 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Spacer(),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: Text(
-                "로그인",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: emailContoller,
-                decoration: const InputDecoration(
-                  labelText: 'E-mail',
-                  border: OutlineInputBorder(),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 100), // 추가된 부분: 상단에 간격 추가
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40), // 이미지 좌우에 여백 추가
+                child: Image.asset(
+                  'images/ndb.jpg',
+                  width: 250, // 이미지의 가로 길이
+                  height: 250, // 이미지의 세로 길이
+                  fit: BoxFit.contain, // 이미지가 차지할 공간을 채우는 방법
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: passController,
-                obscureText: true, // 비밀번호 입력 시 보이지 않도록 설정
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
+              const SizedBox(height: 20), // 이미지와 텍스트 상자 간 간격 추가
+              const Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 20), // 텍스트 상자 좌우에 여백 추가
+                child: Text(
+                  "로그인",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-              child: ElevatedButton(
-                onPressed: () => fireAuthLogin(context),
-                child: const Text("Login"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                errorString,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.red),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SignupPage()),
-                      );
-                    },
-                    child: const Text(
-                      '회원가입',
-                      style: TextStyle(color: Colors.blue),
-                    ),
+              const SizedBox(height: 10), // 텍스트 상자와 입력 상자 간 간격 추가
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20), // 입력 상자 좌우에 여백 추가
+                child: TextField(
+                  controller: emailContoller,
+                  decoration: const InputDecoration(
+                    labelText: 'E-mail',
+                    border: OutlineInputBorder(),
                   ),
-                  const SizedBox(width: 20),
-                  /*Image.asset(
-                    'assets/images/123.png',
-                    width: 100, // 이미지의 가로 길이
-                    height: 100, // 이미지의 세로 길이
-                    fit: BoxFit.cover, // 이미지가 차지할 공간을 채우는 방법
-                  ),*/
-                ],
+                ),
               ),
-            ),
-            const Spacer(),
-          ],
+              const SizedBox(height: 10), // 입력 상자들 간 간격 추가
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20), // 입력 상자 좌우에 여백 추가
+                child: TextField(
+                  controller: passController,
+                  obscureText: true, // 비밀번호 입력 시 보이지 않도록 설정
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20), // 입력 상자와 버튼 간 간격 추가
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20), // 버튼 좌우에 여백 추가
+                child: ElevatedButton(
+                  onPressed: () => fireAuthLogin(context),
+                  child: const Text("Login"),
+                ),
+              ),
+              const SizedBox(height: 10), // 버튼과 회원가입 간 간격 추가
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20), // 버튼 좌우에 여백 추가
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignupPage()),
+                    );
+                  },
+                  child: const Text("회원가입"),
+                ),
+              ),
+              const SizedBox(height: 20), // 추가된 부분: 하단에 간격 추가
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  errorString,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+              const SizedBox(height: 20), // 추가된 부분: 에러 메시지와 하단 간 간격 추가
+            ],
+          ),
         ),
       ),
     );

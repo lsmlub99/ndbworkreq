@@ -30,6 +30,13 @@
             {
               "client_id": "741066874798-b9o6rrlu8kna352trp8inrtavqncru6d.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "741066874798-v335bovfslhoi341qtnni2qip0j0r8n2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterTry"
+              }
             }
           ]
         }
