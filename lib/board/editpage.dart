@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -12,13 +15,12 @@ class EditPage extends StatefulWidget {
 class _EditPageState extends State<EditPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
-
   User? _user;
+  List<File> _imageFiles = [];
 
   @override
   void initState() {
     super.initState();
-    // 사용자 로그인 상태 변경을 감지하는 리스너 추가
     FirebaseAuth.instance.authStateChanges().listen((user) {
       setState(() {
         _user = user;
@@ -26,9 +28,9 @@ class _EditPageState extends State<EditPage> {
     });
   }
 
-  void _publishPost() {
-    // 사용자가 로그인하지 않은 경우 에러 메시지 표시
+  void _publishPost() async {
     if (_user == null) {
+      // 로그인되지 않은 경우 처리
       showDialog(
         context: context,
         builder: (context) {
@@ -49,13 +51,11 @@ class _EditPageState extends State<EditPage> {
       return;
     }
 
-    // 입력된 제목과 내용 가져오기
     String title = _titleController.text.trim();
     String content = _contentController.text.trim();
 
-    // 제목과 내용이 비어있는지 확인
     if (title.isEmpty || content.isEmpty) {
-      // 비어있을 경우 경고창 표시
+      // 제목 또는 내용이 비어있는 경우 처리
       showDialog(
         context: context,
         builder: (context) {
@@ -76,14 +76,13 @@ class _EditPageState extends State<EditPage> {
       return;
     }
 
-    // Firestore에서 사용자의 닉네임 가져오기
     FirebaseFirestore.instance
         .collection('users')
         .doc(_user!.email)
         .get()
-        .then((userSnapshot) {
+        .then((userSnapshot) async {
       if (!userSnapshot.exists) {
-        // 사용자 문서를 찾을 수 없는 경우 에러 메시지 표시
+        // 사용자 정보를 찾을 수 없는 경우 처리
         showDialog(
           context: context,
           builder: (context) {
@@ -106,17 +105,45 @@ class _EditPageState extends State<EditPage> {
 
       String? nickname = userSnapshot['nickname'];
 
-      // Firestore에 게시글 추가
+      List<String> imageUrls = [];
+
+      // 이미지 업로드를 직렬로 처리
+      for (File file in _imageFiles) {
+        Reference storageReference = FirebaseStorage.instance.ref().child(
+            'images/${DateTime.now().millisecondsSinceEpoch}_${_user!.uid}.jpg');
+        UploadTask uploadTask = storageReference.putFile(file);
+        await uploadTask.whenComplete(() async {
+          // 이미지 업로드가 완료된 후 이미지 URL을 가져와서 리스트에 추가
+          String imageUrl = await storageReference.getDownloadURL();
+          imageUrls.add(imageUrl);
+        });
+      }
+
+      // Firestore에 게시글 데이터 저장
       FirebaseFirestore.instance.collection('posts').add({
         'title': title,
         'content': content,
         'author_uid': _user!.email,
-        'author_nickname': nickname, // 작성자의 닉네임 저장
+        'author_nickname': nickname,
+        'image_urls': imageUrls,
         'timestamp': FieldValue.serverTimestamp(),
       }).then((_) {
         // 게시글 추가 후 이전 화면으로 이동
         Navigator.of(context).pop();
       });
+    });
+  }
+
+  void _getImage() async {
+    final picker = ImagePicker();
+    final List<XFile>? pickedFiles = await picker.pickMultiImage();
+
+    setState(() {
+      if (pickedFiles != null) {
+        _imageFiles = pickedFiles.map((file) => File(file.path)).toList();
+      } else {
+        print('No images selected.');
+      }
     });
   }
 
@@ -137,26 +164,51 @@ class _EditPageState extends State<EditPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                hintText: '제목',
-                border: OutlineInputBorder(),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _titleController,
+                decoration: const InputDecoration(
+                  hintText: '제목',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _contentController,
-              maxLines: null, // 여러 줄 입력 가능하도록 설정
-              decoration: const InputDecoration(
-                hintText: '내용',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _contentController,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  hintText: '내용',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              if (_imageFiles.isNotEmpty)
+                GridView.builder(
+                  shrinkWrap: true,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 8.0,
+                    mainAxisSpacing: 8.0,
+                  ),
+                  itemCount: _imageFiles.length,
+                  itemBuilder: (context, index) {
+                    return Image.file(
+                      _imageFiles[index],
+                      fit: BoxFit.cover,
+                    );
+                  },
+                )
+              else
+                const Text('이미지를 선택해주세요.'),
+              ElevatedButton(
+                onPressed: _getImage,
+                child: const Text('이미지 선택'),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
