@@ -1,15 +1,18 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserProfile {
   final String userId;
   final String nickname;
+  final String? department; // 부서 정보 추가
 
-  UserProfile({required this.userId, required this.nickname});
+  UserProfile({required this.userId, required this.nickname, this.department});
 
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
       'nickname': nickname,
+      'department': department, // 부서 정보 추가
     };
   }
 }

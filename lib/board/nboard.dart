@@ -50,11 +50,29 @@ class _NBoardState extends State<NBoard> with SingleTickerProviderStateMixin {
                 ),
               ),
             ),
-            const ListTile(
-              title: Text("전산"),
+            ListTile(
+              title: const Text("전산"),
+              onTap: () {
+                // '전산' 부서의 게시글을 보여주는 화면으로 이동
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const DepartmentPostsPage(department: "전산")),
+                );
+              },
             ),
-            const ListTile(
-              title: Text("구매"),
+            ListTile(
+              title: const Text("구매"),
+              onTap: () {
+                // '구매' 부서의 게시글을 보여주는 화면으로 이동
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const DepartmentPostsPage(department: "구매")),
+                );
+              },
             ),
           ],
         ),
@@ -95,7 +113,28 @@ class _NBoardState extends State<NBoard> with SingleTickerProviderStateMixin {
             MaterialPageRoute(builder: (context) => const EditPage()),
           );
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class DepartmentPostsPage extends StatelessWidget {
+  final String department;
+
+  const DepartmentPostsPage({Key? key, required this.department})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // 해당 부서에 대한 게시글을 필터링하거나 가져오는 코드를 추가할 수 있습니다.
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('$department 부서 게시글'),
+      ),
+      body: Center(
+        child: Text('이 페이지에서 $department 부서 게시글을 보여줄 수 있습니다.'),
       ),
     );
   }
