@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'editpage.dart';
 import 'package:flutter_try/chat/chatbot.dart';
 import '../setting/settings.dart';
+import 'departmentpostpage.dart';
 import 'home_page.dart';
 
 class NBoard extends StatefulWidget {
@@ -50,30 +51,31 @@ class _NBoardState extends State<NBoard> with SingleTickerProviderStateMixin {
                 ),
               ),
             ),
-            ListTile(
-              title: const Text("전산"),
-              onTap: () {
-                // '전산' 부서의 게시글을 보여주는 화면으로 이동
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
+            // 부서 목록 버튼 생성
+            for (var department in [
+              '원무과',
+              '시설팀',
+              '전산팀',
+              '영양팀',
+              '구매총무팀',
+              '심사팀',
+              '재무회계인사팀',
+              '의무기록팀',
+              '기획홍보팀'
+            ])
+              ListTile(
+                title: Text(department),
+                onTap: () {
+                  // 각 부서의 게시글을 보여주는 화면으로 이동
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
                       builder: (context) =>
-                          const DepartmentPostsPage(department: "전산")),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text("구매"),
-              onTap: () {
-                // '구매' 부서의 게시글을 보여주는 화면으로 이동
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          const DepartmentPostsPage(department: "구매")),
-                );
-              },
-            ),
+                          DepartmentPostsPage(department: department),
+                    ),
+                  );
+                },
+              ),
           ],
         ),
       ),
@@ -114,27 +116,6 @@ class _NBoardState extends State<NBoard> with SingleTickerProviderStateMixin {
           );
         },
         child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-class DepartmentPostsPage extends StatelessWidget {
-  final String department;
-
-  const DepartmentPostsPage({Key? key, required this.department})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // 해당 부서에 대한 게시글을 필터링하거나 가져오는 코드를 추가할 수 있습니다.
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('$department 부서 게시글'),
-      ),
-      body: Center(
-        child: Text('이 페이지에서 $department 부서 게시글을 보여줄 수 있습니다.'),
       ),
     );
   }

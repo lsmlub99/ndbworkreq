@@ -17,6 +17,18 @@ class _EditPageState extends State<EditPage> {
   User? _user;
   List<File> _imageFiles = [];
   final EditData _editData = EditData(FirebaseAuth.instance.currentUser);
+  String? selectedDepartment;
+  final List<String> departments = [
+    '원무과',
+    '시설팀',
+    '전산팀',
+    '영양팀',
+    '구매총무팀',
+    '심사팀',
+    '재무회계인사팀',
+    '의무기록팀',
+    '기획홍보팀'
+  ];
 
   @override
   void initState() {
@@ -33,32 +45,26 @@ class _EditPageState extends State<EditPage> {
       String title = _titleController.text.trim();
       String content = _contentController.text.trim();
 
-      if (title.isEmpty || content.isEmpty) {
-        // 제목 또는 내용이 비어있는 경우 처리
-        throw Exception('제목과 내용을 입력해주세요.');
+      if (title.isEmpty || content.isEmpty || selectedDepartment == null) {
+        throw Exception('제목, 내용, 부서를 선택해주세요.');
       }
 
-      // 이미지 업로드 중임을 사용자에게 알리기 위해 인디케이터 표시
       showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         },
       );
 
-      // 이미지 업로드
-      await _editData.publishPost(title, content, _imageFiles);
+      await _editData.publishPost(
+          title, content, _imageFiles, selectedDepartment!);
 
-      // 인디케이터 닫기
       Navigator.of(context).pop();
-
-      // 게시글 추가 후 이전 화면으로 이동
       Navigator.of(context).pop();
     } catch (e) {
-      // 오류 발생 시 알림 다이얼로그 표시
       showDialog(
         context: context,
         builder: (context) {
@@ -128,6 +134,25 @@ class _EditPageState extends State<EditPage> {
                   hintText: '내용',
                   border: OutlineInputBorder(),
                 ),
+              ),
+              const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                value: selectedDepartment,
+                decoration: const InputDecoration(
+                  labelText: '부서 선택',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    selectedDepartment = value;
+                  });
+                },
+                items: departments.map((department) {
+                  return DropdownMenuItem<String>(
+                    value: department,
+                    child: Text(department),
+                  );
+                }).toList(),
               ),
               const SizedBox(height: 20),
               if (_imageFiles.isNotEmpty)
