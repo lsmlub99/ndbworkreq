@@ -39,14 +39,15 @@ class _NBoardState extends State<NBoard> with SingleTickerProviderStateMixin {
           children: [
             DrawerHeader(
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: Colors.blueGrey, // DrawerHeader 배경색 변경
               ),
               child: Container(
-                alignment: Alignment.centerLeft,
+                alignment: Alignment.center,
                 child: const Text(
                   "부서",
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 24,
+                    color: Colors.white, // 텍스트 색상 변경
                   ),
                 ),
               ),
@@ -91,7 +92,7 @@ class _NBoardState extends State<NBoard> with SingleTickerProviderStateMixin {
         height: 80,
         child: TabBar(
           controller: _tabController,
-          labelColor: Colors.black,
+          labelColor: Colors.blue, // 선택된 탭의 텍스트 색상 변경
           tabs: const [
             Tab(
               icon: Icon(Icons.person),
@@ -107,15 +108,6 @@ class _NBoardState extends State<NBoard> with SingleTickerProviderStateMixin {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const EditPage()),
-          );
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }

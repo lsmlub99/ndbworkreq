@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/editdata.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -129,11 +130,17 @@ class _EditPageState extends State<EditPage> {
               const SizedBox(height: 20),
               TextField(
                 controller: _contentController,
+                keyboardType: TextInputType.multiline,
                 maxLines: null,
                 decoration: const InputDecoration(
                   hintText: '내용',
                   border: OutlineInputBorder(),
                 ),
+                onChanged: (text) {
+                  if (text.length % 30 == 0) {
+                    _contentController.text += '\n';
+                  }
+                },
               ),
               const SizedBox(height: 20),
               DropdownButtonFormField<String>(

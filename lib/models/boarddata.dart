@@ -6,6 +6,20 @@ class BoardData {
         .collection('departments')
         .doc(department)
         .collection('posts')
+        .orderBy('timestamp', descending: true)
         .snapshots();
+  }
+
+  static Future<void> deletePost(String postId, String department) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('departments')
+          .doc(department)
+          .collection('posts')
+          .doc(postId)
+          .delete();
+    } catch (e) {
+      print('Error deleting post: $e');
+    }
   }
 }
