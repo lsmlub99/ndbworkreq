@@ -154,7 +154,7 @@ class _DepartmentPostsPageState extends State<DepartmentPostsPage> {
                           child: ExpandableText(
                             text: postData['content'],
                             style: const TextStyle(
-                              fontSize: 17,
+                              fontSize: 16,
                             ),
                           )),
                       Padding(

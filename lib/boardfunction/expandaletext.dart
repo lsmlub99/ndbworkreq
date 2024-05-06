@@ -16,14 +16,16 @@ class _ExpandableTextState extends State<ExpandableText> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.text,
-          style: widget.style,
-          maxLines: _expanded ? null : 3,
-          overflow: TextOverflow.ellipsis,
+        Expanded(
+          child: Text(
+            widget.text,
+            style: widget.style,
+            maxLines: _expanded ? null : 3,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
         if (_isExpandable(widget.text)) // 텍스트가 3줄 이상이면 버튼 표시
           TextButton(
