@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'editpage.dart';
+
 import 'package:flutter_try/chat/chatbot.dart';
 import '../setting/settings.dart';
-import 'departmentpostpage.dart';
+
 import 'home_page.dart';
 
 class NBoard extends StatefulWidget {
@@ -33,57 +33,10 @@ class _NBoardState extends State<NBoard> with SingleTickerProviderStateMixin {
       appBar: AppBar(
         title: const Text('ndb 해주세요'),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.blueGrey, // DrawerHeader 배경색 변경
-              ),
-              child: Container(
-                alignment: Alignment.center,
-                child: const Text(
-                  "부서",
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: Colors.white, // 텍스트 색상 변경
-                  ),
-                ),
-              ),
-            ),
-            // 부서 목록 버튼 생성
-            for (var department in [
-              '원무과',
-              '시설팀',
-              '전산팀',
-              '영양팀',
-              '구매총무팀',
-              '심사팀',
-              '재무회계인사팀',
-              '의무기록팀',
-              '기획홍보팀'
-            ])
-              ListTile(
-                title: Text(department),
-                onTap: () {
-                  // 각 부서의 게시글을 보여주는 화면으로 이동
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          DepartmentPostsPage(department: department),
-                    ),
-                  );
-                },
-              ),
-          ],
-        ),
-      ),
       body: TabBarView(
         controller: _tabController,
         children: const [
-          HomePage(), // HomePage 위젯을 불러옵니다.
+          HomePage(), // 홈 화면
           ChatBotPage(),
           SettingsPage(),
         ],
@@ -93,6 +46,13 @@ class _NBoardState extends State<NBoard> with SingleTickerProviderStateMixin {
         child: TabBar(
           controller: _tabController,
           labelColor: Colors.blue, // 선택된 탭의 텍스트 색상 변경
+          onTap: (int index) {
+            // 탭을 눌렀을 때 동작 설정
+            if (index == 0) {
+              // 게시판 탭을 눌렀을 때
+              _tabController.animateTo(0); // 홈 화면으로 이동
+            }
+          },
           tabs: const [
             Tab(
               icon: Icon(Icons.person),
