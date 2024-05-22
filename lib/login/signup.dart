@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'auth_service.dart';
-import '../models/profile.dart';
 import 'login.dart'; // 로그인 페이지를 import 해주세요
 
 class SignupPage extends StatefulWidget {

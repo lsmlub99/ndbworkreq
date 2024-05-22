@@ -1,10 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 //import 'package:flutter/services.dart';
-=======
-import 'package:flutter/services.dart';
->>>>>>> c0945929153f796b1e506760ea42e3b43eeb8dfd
 import 'package:image_picker/image_picker.dart';
 import '../models/editdata.dart';
 import 'package:firebase_auth/firebase_auth.dart';
