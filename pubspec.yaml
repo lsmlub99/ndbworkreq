@@ -44,9 +44,12 @@ dependencies:
   provider:
   firebase_storage:
   flutter_staggered_grid_view: ^0.7.0
+<<<<<<< HEAD
   firebase_messaging: ^14.9.3
   googleapis_auth: ^1.6.0
   flutter_local_notifications: ^17.1.2
+=======
+>>>>>>> c0945929153f796b1e506760ea42e3b43eeb8dfd
 
 dev_dependencies:
   flutter_test:
@@ -77,7 +80,10 @@ flutter:
 
   assets:
     - images/
+<<<<<<< HEAD
     - source/data/
+=======
+>>>>>>> c0945929153f796b1e506760ea42e3b43eeb8dfd
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
