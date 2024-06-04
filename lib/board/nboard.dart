@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'home_page.dart';
 import 'package:flutter_try/chat/chatbot.dart';
 import '../setting/settings.dart';
-
-import 'home_page.dart';
 
 class NBoard extends StatefulWidget {
   const NBoard({Key? key}) : super(key: key);
@@ -45,14 +43,7 @@ class _NBoardState extends State<NBoard> with SingleTickerProviderStateMixin {
         height: 80,
         child: TabBar(
           controller: _tabController,
-          labelColor: Colors.blue, // 선택된 탭의 텍스트 색상 변경
-          onTap: (int index) {
-            // 탭을 눌렀을 때 동작 설정
-            if (index == 0) {
-              // 게시판 탭을 눌렀을 때
-              _tabController.animateTo(0); // 홈 화면으로 이동
-            }
-          },
+          labelColor: Colors.blue,
           tabs: const [
             Tab(
               icon: Icon(Icons.person),

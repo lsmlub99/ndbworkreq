@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import '../models/editdata.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import '../models/editdataprovider.dart';
+import 'package:reorderables/reorderables.dart';
 
 class EditPage extends StatefulWidget {
   const EditPage({Key? key}) : super(key: key);
@@ -17,28 +18,13 @@ class _EditPageState extends State<EditPage> {
   final TextEditingController _contentController = TextEditingController();
   User? _user;
   List<File> _imageFiles = [];
-  final EditData _editData = EditData(FirebaseAuth.instance.currentUser);
-  String? selectedDepartment;
-  final List<String> departments = [
-    '원무과',
-    '시설팀',
-    '전산팀',
-    '영양팀',
-    '구매총무팀',
-    '심사팀',
-    '재무회계인사팀',
-    '의무기록팀',
-    '기획홍보팀'
-  ];
+  late EditDataProvider _editDataProvider;
 
   @override
   void initState() {
     super.initState();
-    FirebaseAuth.instance.authStateChanges().listen((user) {
-      setState(() {
-        _user = user;
-      });
-    });
+    _user = FirebaseAuth.instance.currentUser;
+    _editDataProvider = EditDataProvider(_user);
   }
 
   void _publishPost() async {
@@ -46,7 +32,9 @@ class _EditPageState extends State<EditPage> {
       String title = _titleController.text.trim();
       String content = _contentController.text.trim();
 
-      if (title.isEmpty || content.isEmpty || selectedDepartment == null) {
+      if (title.isEmpty ||
+          content.isEmpty ||
+          _editDataProvider.selectedDepartment == null) {
         throw Exception('제목, 내용, 부서를 선택해주세요.');
       }
 
@@ -60,8 +48,8 @@ class _EditPageState extends State<EditPage> {
         },
       );
 
-      await _editData.publishPost(
-          title, content, _imageFiles, selectedDepartment!);
+      await _editDataProvider.publishPost(
+          title, content, _imageFiles, _editDataProvider.selectedDepartment!);
 
       Navigator.of(context).pop();
       Navigator.of(context).pop();
@@ -120,6 +108,136 @@ class _EditPageState extends State<EditPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (_imageFiles.isNotEmpty)
+                Column(
+                  children: [
+                    CarouselSlider.builder(
+                      itemCount: _imageFiles.length,
+                      itemBuilder: (context, index, realIndex) {
+                        return Stack(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 5.0,
+                                    spreadRadius: 1.0,
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: Image.file(
+                                  _imageFiles[index],
+                                  fit: BoxFit.cover,
+                                  width: 1000.0,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 10,
+                              right: 10,
+                              child: Container(
+                                padding: const EdgeInsets.all(5.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.black54,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Text(
+                                  '${index + 1} / ${_imageFiles.length}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                      options: CarouselOptions(
+                        autoPlay: false,
+                        enlargeCenterPage: true,
+                        aspectRatio: 2.0,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ReorderableWrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      padding: const EdgeInsets.all(8),
+                      children: _imageFiles.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        File imageFile = entry.value;
+                        return Container(
+                          key: ValueKey(index),
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 5.0,
+                                spreadRadius: 1.0,
+                              ),
+                            ],
+                          ),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: Image.file(
+                                  imageFile,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 8,
+                                right: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.all(5.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black54,
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Text(
+                                    '${index + 1}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      onReorder: (oldIndex, newIndex) {
+                        setState(() {
+                          if (newIndex > oldIndex) {
+                            newIndex -= 1;
+                          }
+                          final File item = _imageFiles.removeAt(oldIndex);
+                          _imageFiles.insert(newIndex, item);
+                        });
+                      },
+                    ),
+                  ],
+                )
+              else
+                const Text('이미지를 선택해주세요.'),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _getImage,
+                child: const Text('이미지 선택'),
+              ),
+              const SizedBox(height: 20),
               TextField(
                 controller: _titleController,
                 decoration: const InputDecoration(
@@ -144,45 +262,22 @@ class _EditPageState extends State<EditPage> {
               ),
               const SizedBox(height: 20),
               DropdownButtonFormField<String>(
-                value: selectedDepartment,
+                value: _editDataProvider.selectedDepartment,
                 decoration: const InputDecoration(
                   labelText: '부서 선택',
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value) {
                   setState(() {
-                    selectedDepartment = value;
+                    _editDataProvider.selectedDepartment = value;
                   });
                 },
-                items: departments.map((department) {
+                items: _editDataProvider.departments.map((department) {
                   return DropdownMenuItem<String>(
                     value: department,
                     child: Text(department),
                   );
                 }).toList(),
-              ),
-              const SizedBox(height: 20),
-              if (_imageFiles.isNotEmpty)
-                GridView.builder(
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
-                  ),
-                  itemCount: _imageFiles.length,
-                  itemBuilder: (context, index) {
-                    return Image.file(
-                      _imageFiles[index],
-                      fit: BoxFit.cover,
-                    );
-                  },
-                )
-              else
-                const Text('이미지를 선택해주세요.'),
-              ElevatedButton(
-                onPressed: _getImage,
-                child: const Text('이미지 선택'),
               ),
             ],
           ),

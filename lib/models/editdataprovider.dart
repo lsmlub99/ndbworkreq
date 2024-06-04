@@ -1,12 +1,34 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class EditData {
+class EditDataProvider extends ChangeNotifier {
   final User? user;
+  String? _selectedDepartment; // Modified
+  final List<String> _departments = [
+    // Modified
+    '원무과',
+    '시설팀',
+    '전산팀',
+    '영양팀',
+    '구매총무팀',
+    '심사팀',
+    '재무회계인사팀',
+    '의무기록팀',
+    '기획홍보팀'
+  ];
 
-  EditData(this.user);
+  EditDataProvider(this.user);
+
+  String? get selectedDepartment => _selectedDepartment;
+  set selectedDepartment(String? department) {
+    _selectedDepartment = department;
+    notifyListeners();
+  }
+
+  List<String> get departments => _departments; // Modified
 
   Future<void> publishPost(String title, String content, List<File> imageFiles,
       String department) async {
@@ -43,10 +65,14 @@ class EditData {
         .add({
       'title': title,
       'content': content,
-      'author_uid': user!.email,
-      'author_nickname': nickname,
+      'userId': user!.email,
+      'nickname': nickname,
       'image_urls': imageUrls,
       'timestamp': FieldValue.serverTimestamp(),
+      'status': '접수중',
     });
+
+    // 데이터 변경 후에 리스너들에게 알림
+    notifyListeners();
   }
 }

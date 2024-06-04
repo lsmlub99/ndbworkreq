@@ -1,11 +1,10 @@
-// signup_page.dart
-
 import 'package:flutter/material.dart';
-import 'auth_service.dart';
-import 'login.dart'; // 로그인 페이지를 import 해주세요
+import 'package:provider/provider.dart';
+import 'auth_provider.dart';
+import 'login.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({Key? key}) : super(key: key);
+  const SignupPage({super.key});
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -30,35 +29,6 @@ class _SignupPageState extends State<SignupPage> {
     '의무기록팀',
     '기획홍보팀'
   ];
-
-  final AuthService _authService = AuthService();
-
-  void fireAuthSignUp(BuildContext context) async {
-    try {
-      if (passController.text != confirmPassController.text) {
-        setState(() {
-          errorString = '비밀번호가 일치하지 않습니다.';
-        });
-        return;
-      }
-
-      await _authService.signUpWithEmailAndPassword(
-        email: emailController.text,
-        password: passController.text,
-        nickname: nicknameController.text,
-        department: selectedDepartment,
-      );
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
-    } catch (e) {
-      setState(() {
-        errorString = e.toString();
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,8 +97,33 @@ class _SignupPageState extends State<SignupPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  fireAuthSignUp(context);
+                onPressed: () async {
+                  if (passController.text != confirmPassController.text) {
+                    setState(() {
+                      errorString = '비밀번호가 일치하지 않습니다.';
+                    });
+                    return;
+                  }
+                  try {
+                    await context
+                        .read<AuthProvider>()
+                        .signUpWithEmailAndPassword(
+                          email: emailController.text,
+                          password: passController.text,
+                          nickname: nicknameController.text,
+                          department: selectedDepartment,
+                        );
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
+                    );
+                  } catch (e) {
+                    setState(() {
+                      errorString = e.toString();
+                    });
+                  }
                 },
                 child: const Text(
                   '회원가입',

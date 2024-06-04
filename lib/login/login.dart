@@ -1,11 +1,11 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'auth_provider.dart';
 import '../board/nboard.dart';
 import 'signup.dart'; // 회원가입 페이지를 import 해주세요
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -15,36 +15,6 @@ class _LoginPageState extends State<LoginPage> {
   final emailContoller = TextEditingController(); // email 입력 컨트롤러
   final passController = TextEditingController(); // password 입력 컨트롤러
   String errorString = ''; // login error 보려고 만든 String state
-
-  // Firebase auth login 함수, 이메일 + 비번으로 로그인
-  void fireAuthLogin(BuildContext context) async {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: emailContoller.text, password: passController.text);
-      if (userCredential.user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const NBoard()),
-        );
-      }
-    } catch (error) {
-      setState(() {
-        errorString = '이메일이나 비밀번호를 확인해주세요.';
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initializeFirebase(); // Firebase 초기화 함수 호출
-  }
-
-  // Firebase 초기화 함수
-  void initializeFirebase() async {
-    await Firebase.initializeApp();
-  }
 
   @override
   void dispose() {
@@ -113,7 +83,25 @@ class _LoginPageState extends State<LoginPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20), // 버튼 좌우에 여백 추가
                 child: ElevatedButton(
-                  onPressed: () => fireAuthLogin(context),
+                  onPressed: () async {
+                    final authProvider = context.read<AuthProvider>();
+                    try {
+                      await authProvider.login(
+                        emailContoller.text,
+                        passController.text,
+                      );
+                      if (!mounted) return;
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const NBoard()),
+                      );
+                    } catch (error) {
+                      if (!mounted) return;
+                      setState(() {
+                        errorString = '이메일이나 비밀번호를 확인해주세요.';
+                      });
+                    }
+                  },
                   child: const Text("Login"),
                 ),
               ),

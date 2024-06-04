@@ -30,14 +30,12 @@ class _ImageDetailScreenState extends State<ImageDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
-        // GestureDetector 추가
         onVerticalDragEnd: (details) {
           if (details.primaryVelocity! > 0) {
-            // 아래로 스와이프 시
-            Navigator.pop(context); // 화면 닫기
+            Navigator.pop(context);
           }
         },
-        behavior: HitTestBehavior.translucent, // 제스처 영역 확장
+        behavior: HitTestBehavior.translucent,
         child: Stack(
           children: [
             PageView.builder(
@@ -50,12 +48,14 @@ class _ImageDetailScreenState extends State<ImageDetailScreen> {
               },
               itemBuilder: (context, index) {
                 return Center(
-                  child: Hero(
-                    tag: widget.imageUrls[index],
-                    child: Image.network(
-                      widget.imageUrls[index],
-                      fit: BoxFit.contain,
-                    ),
+                  child: Image.network(
+                    widget.imageUrls[index],
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Center(
+                        child: Text('이미지를 불러올 수 없습니다.'),
+                      );
+                    },
                   ),
                 );
               },
@@ -101,6 +101,17 @@ class _ImageDetailScreenState extends State<ImageDetailScreen> {
                     },
                   ),
                 ],
+              ),
+            ),
+            Positioned(
+              top: 40,
+              right: 20,
+              child: Text(
+                '${_currentIndex + 1} / ${widget.imageUrls.length}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
               ),
             ),
           ],
