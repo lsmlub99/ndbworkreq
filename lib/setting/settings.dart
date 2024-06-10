@@ -16,7 +16,7 @@ class SettingsPage extends StatelessWidget {
             // 로그아웃 후 다시 로그인 페이지로 이동
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => LoginPage()),
+              MaterialPageRoute(builder: (context) => const LoginPage()),
             );
           },
           child: const Text('로그아웃'),

@@ -8,6 +8,28 @@ class BoardDataProvider extends ChangeNotifier {
 
   Stream<QuerySnapshot>? get postsStream => _postsStream;
 
+  String? _currentUserDepartment;
+
+  Future<void> fetchCurrentUserDepartment(String userId) async {
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      if (userDoc.exists) {
+        Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
+        if (data != null) {
+          _currentUserDepartment = data['department'];
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print('Error fetching user department: $e');
+    }
+  }
+
+  String? get currentUserDepartment => _currentUserDepartment;
+
   void getPostsStreamForDepartment(String department) {
     this.department = department; // department 필드를 설정합니다.
     _postsStream = FirebaseFirestore.instance

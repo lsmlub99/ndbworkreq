@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/boarddataprovider.dart';
-import 'post_cart.dart';
+import 'post_card.dart';
 import '../board/editpage.dart';
 
 class DepartmentPostsPage extends StatefulWidget {
@@ -20,8 +20,12 @@ class _DepartmentPostsPageState extends State<DepartmentPostsPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = Provider.of<BoardDataProvider>(context, listen: false);
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await provider.fetchCurrentUserDepartment(user.email!);
+      }
       provider.getPostsStreamForDepartment(widget.department);
     });
   }

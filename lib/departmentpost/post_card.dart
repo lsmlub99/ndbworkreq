@@ -35,6 +35,9 @@ class PostCard extends StatelessWidget {
     List<String> imageUrls = List<String>.from(postData['image_urls']);
     int currentPage = provider.getCurrentPage(postId);
 
+    bool canViewAndEdit =
+        provider.currentUserDepartment == postData['department'];
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
@@ -143,37 +146,39 @@ class PostCard extends StatelessWidget {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-              child: Row(
-                children: [
-                  const Text(
-                    '진행상황: ',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          provider.updatePostStatus(postId, '접수중');
-                        },
-                        child: const Text('접수중'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          provider.updatePostStatus(postId, '처리중');
-                        },
-                        child: const Text('처리중'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          provider.updatePostStatus(postId, '완료');
-                        },
-                        child: const Text('완료'),
-                      ),
-                    ],
-                  )
-                ],
-              ),
+              child: canViewAndEdit
+                  ? Row(
+                      children: [
+                        const Text(
+                          '진행상황: ',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                provider.updatePostStatus(postId, '접수중');
+                              },
+                              child: const Text('접수중'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                provider.updatePostStatus(postId, '처리중');
+                              },
+                              child: const Text('처리중'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                provider.updatePostStatus(postId, '완료');
+                              },
+                              child: const Text('완료'),
+                            ),
+                          ],
+                        )
+                      ],
+                    )
+                  : const SizedBox.shrink(),
             ),
             if (currentUser!.email == authorUid)
               Padding(

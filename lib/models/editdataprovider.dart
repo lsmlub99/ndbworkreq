@@ -70,6 +70,7 @@ class EditDataProvider extends ChangeNotifier {
       'image_urls': imageUrls,
       'timestamp': FieldValue.serverTimestamp(),
       'status': '접수중',
+      'department': department // 선택한 부서 정보 할당
     });
 
     // 데이터 변경 후에 리스너들에게 알림
