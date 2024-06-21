@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/boarddataprovider.dart';
+import '../departmentpost/boarddataprovider.dart';
 import '../departmentpost/departmentpostpage.dart';
 
 class HomePage extends StatefulWidget {

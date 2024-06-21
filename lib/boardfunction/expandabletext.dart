@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/boarddataprovider.dart';
+import '../departmentpost/boarddataprovider.dart';
 
 class ExpandableText extends StatefulWidget {
   final String text;

@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/profile.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
+import '../setting/userprofileinfo.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -29,22 +31,38 @@ class AuthProvider with ChangeNotifier {
     required String password,
     required String nickname,
     required String? department,
+    File? profileImage,
   }) async {
     try {
-      final UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      final UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
       _user = userCredential.user;
 
+      String? profileImageUrl;
+      if (profileImage != null) {
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('profile_images')
+            .child('$email.jpg');
+        await ref.putFile(profileImage);
+        profileImageUrl = await ref.getDownloadURL();
+      }
+
       _userProfile = UserProfile(
-        userId: userCredential.user!.email!,
+        userId: email,
         nickname: nickname,
         department: department,
+        profileImageUrl: profileImageUrl,
       );
 
-      await _firestore.collection('users').doc(_userProfile!.userId).set({
+      await _firestore.collection('users').doc(email).set({
         'nickname': _userProfile!.nickname,
         'department': _userProfile!.department,
-        'userId': _userProfile!.userId
+        'userId': _userProfile!.userId,
+        'profileImageUrl': _userProfile!.profileImageUrl,
       });
 
       notifyListeners();
@@ -56,7 +74,9 @@ class AuthProvider with ChangeNotifier {
   Future<void> login(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
       _user = userCredential.user;
       await _loadUserProfile();
       notifyListeners();
@@ -81,6 +101,7 @@ class AuthProvider with ChangeNotifier {
           userId: doc.id,
           nickname: doc['nickname'],
           department: doc['department'],
+          profileImageUrl: doc['profileImageUrl'], // Fixed here
         );
       } else {
         _userProfile = null;

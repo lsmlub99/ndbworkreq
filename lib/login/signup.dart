@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'auth_provider.dart';
 import 'login.dart';
 
@@ -17,6 +21,8 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController nicknameController = TextEditingController();
   String? selectedDepartment;
   String errorString = '';
+  String? profileImageUrl;
+  File? profileImageFile; // Added to store the selected image file
 
   final List<String> departments = [
     '원무과',
@@ -29,6 +35,25 @@ class _SignupPageState extends State<SignupPage> {
     '의무기록팀',
     '기획홍보팀'
   ];
+
+  Future<void> uploadProfileImage(XFile image) async {
+    try {
+      profileImageFile = File(image.path); // Store the selected image file
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('profile_images')
+          .child('${emailController.text}.jpg');
+      await ref.putFile(File(image.path));
+      String url = await ref.getDownloadURL();
+      setState(() {
+        profileImageUrl = url;
+      });
+    } catch (e) {
+      setState(() {
+        errorString = 'Failed to upload profile image: $e';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +68,27 @@ class _SignupPageState extends State<SignupPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              GestureDetector(
+                onTap: () async {
+                  final picker = ImagePicker();
+                  final pickedFile =
+                      await picker.pickImage(source: ImageSource.gallery);
+
+                  if (pickedFile != null) {
+                    await uploadProfileImage(pickedFile);
+                  }
+                },
+                child: CircleAvatar(
+                  radius: 120,
+                  backgroundImage: profileImageUrl != null
+                      ? NetworkImage(profileImageUrl!)
+                      : null,
+                  child: profileImageUrl == null
+                      ? const Icon(Icons.add_a_photo, size: 50)
+                      : null,
+                ),
+              ),
+              const SizedBox(height: 20),
               TextField(
                 controller: emailController,
                 decoration: const InputDecoration(
@@ -112,6 +158,7 @@ class _SignupPageState extends State<SignupPage> {
                           password: passController.text,
                           nickname: nicknameController.text,
                           department: selectedDepartment,
+                          profileImage: profileImageFile, // Pass the image file
                         );
 
                     Navigator.pushReplacement(

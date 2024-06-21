@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/boarddataprovider.dart';
+import 'boarddataprovider.dart';
 import 'post_card.dart';
-import '../board/editpage.dart';
+import '../editpage/editpage.dart';
 
 class DepartmentPostsPage extends StatefulWidget {
   final String department;
@@ -35,12 +35,6 @@ class _DepartmentPostsPageState extends State<DepartmentPostsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.department} 게시글'),
-        leading: IconButton(
-          icon: const Icon(Icons.home),
-          onPressed: () {
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          },
-        ),
       ),
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),

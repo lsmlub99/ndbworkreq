@@ -3,15 +3,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class UserProfile {
   final String userId;
   final String nickname;
-  final String? department; // 부서 정보 추가
+  final String? department;
+  final String? profileImageUrl; // 프로필 이미지 URL 추가
 
-  UserProfile({required this.userId, required this.nickname, this.department});
+  UserProfile({
+    required this.userId,
+    required this.nickname,
+    this.department,
+    this.profileImageUrl,
+  });
 
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
       'nickname': nickname,
-      'department': department, // 부서 정보 추가
+      'department': department,
+      'profileImageUrl': profileImageUrl, // 프로필 이미지 URL 추가
     };
   }
 }

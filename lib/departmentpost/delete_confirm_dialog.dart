@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/boarddataprovider.dart';
+import 'boarddataprovider.dart';
 
 class DeleteConfirmationDialog extends StatelessWidget {
   final String postId;

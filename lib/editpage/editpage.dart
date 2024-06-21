@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../models/editdataprovider.dart';
+import 'editdataprovider.dart';
 import 'package:reorderables/reorderables.dart';
 
 class EditPage extends StatefulWidget {

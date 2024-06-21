@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/boarddataprovider.dart';
+import 'boarddataprovider.dart';
 import '../boardfunction/imagedetailscreen.dart';
-import '../boardfunction/expandaletext.dart';
+import '../boardfunction/expandabletext.dart';
 import 'delete_confirm_dialog.dart';
 
 class PostCard extends StatelessWidget {
