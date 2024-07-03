@@ -46,7 +46,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '741066874798',
     projectId: 'flutterex1-f7bae',
     authDomain: 'flutterex1-f7bae.firebaseapp.com',
-    databaseURL: 'https://flutterex1-f7bae-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://flutterex1-f7bae-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'flutterex1-f7bae.appspot.com',
     measurementId: 'G-PGXQF6QDQ7',
   );
@@ -56,7 +57,8 @@ class DefaultFirebaseOptions {
     appId: '1:741066874798:android:ebbeca5df285ec1b96323f',
     messagingSenderId: '741066874798',
     projectId: 'flutterex1-f7bae',
-    databaseURL: 'https://flutterex1-f7bae-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://flutterex1-f7bae-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'flutterex1-f7bae.appspot.com',
   );
 
@@ -65,9 +67,11 @@ class DefaultFirebaseOptions {
     appId: '1:741066874798:ios:25fe05f1a1100bdd96323f',
     messagingSenderId: '741066874798',
     projectId: 'flutterex1-f7bae',
-    databaseURL: 'https://flutterex1-f7bae-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://flutterex1-f7bae-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'flutterex1-f7bae.appspot.com',
-    iosClientId: '741066874798-v335bovfslhoi341qtnni2qip0j0r8n2.apps.googleusercontent.com',
+    iosClientId:
+        '741066874798-v335bovfslhoi341qtnni2qip0j0r8n2.apps.googleusercontent.com',
     iosBundleId: 'com.example.flutterTry',
   );
 
@@ -76,9 +80,11 @@ class DefaultFirebaseOptions {
     appId: '1:741066874798:ios:25fe05f1a1100bdd96323f',
     messagingSenderId: '741066874798',
     projectId: 'flutterex1-f7bae',
-    databaseURL: 'https://flutterex1-f7bae-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://flutterex1-f7bae-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'flutterex1-f7bae.appspot.com',
-    iosClientId: '741066874798-v335bovfslhoi341qtnni2qip0j0r8n2.apps.googleusercontent.com',
+    iosClientId:
+        '741066874798-v335bovfslhoi341qtnni2qip0j0r8n2.apps.googleusercontent.com',
     iosBundleId: 'com.example.flutterTry',
   );
 
@@ -88,9 +94,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '741066874798',
     projectId: 'flutterex1-f7bae',
     authDomain: 'flutterex1-f7bae.firebaseapp.com',
-    databaseURL: 'https://flutterex1-f7bae-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://flutterex1-f7bae-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'flutterex1-f7bae.appspot.com',
     measurementId: 'G-ZR8E2XLPBS',
   );
-
 }

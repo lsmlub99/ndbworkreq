@@ -161,10 +161,12 @@ class _SignupPageState extends State<SignupPage> {
                           profileImage: profileImageFile, // Pass the image file
                         );
 
-                    Navigator.pushReplacement(
+                    Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const LoginPage()),
+                        builder: (context) => const LoginPage(),
+                      ),
+                      (Route<dynamic> route) => false,
                     );
                   } catch (e) {
                     setState(() {

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BoardDataProvider extends ChangeNotifier {
-  final Map<String, int> _currentPageMap = {};
+  final Map<String, Map<String, int>> _currentPageMap =
+      {}; // 부서별로 currentPageMap을 관리합니다.
   Stream<QuerySnapshot>? _postsStream;
   String? department; // department 필드를 추가합니다.
 
@@ -41,26 +42,33 @@ class BoardDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  int getCurrentPage(String postId) {
-    return _currentPageMap[postId] ?? 0;
+  int getCurrentPage(String department, String postId) {
+    return _currentPageMap[department]?[postId] ?? 0;
   }
 
-  void setCurrentPage(String postId, int pageIndex) {
-    _currentPageMap[postId] = pageIndex;
+  void setCurrentPage(String department, String postId, int pageIndex) {
+    if (!_currentPageMap.containsKey(department)) {
+      _currentPageMap[department] = {};
+    }
+    _currentPageMap[department]![postId] = pageIndex;
     notifyListeners();
   }
 
-  Future<void> deletePost(String postId, String department) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('departments')
-          .doc(department)
-          .collection('posts')
-          .doc(postId)
-          .delete();
-      notifyListeners();
-    } catch (e) {
-      print('Error deleting post: $e');
+  Future<void> deletePost(String postId) async {
+    if (department != null) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('departments')
+            .doc(department)
+            .collection('posts')
+            .doc(postId)
+            .delete();
+        notifyListeners();
+      } catch (e) {
+        print('Error deleting post: $e');
+      }
+    } else {
+      print('Department is null');
     }
   }
 
