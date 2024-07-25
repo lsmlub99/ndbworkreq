@@ -4,7 +4,7 @@ import 'package:flutter_try/chat/chatbot.dart';
 import '../setting/settings.dart';
 
 class NBoard extends StatefulWidget {
-  const NBoard({Key? key}) : super(key: key);
+  const NBoard({super.key});
 
   @override
   State<NBoard> createState() => _NBoardState();

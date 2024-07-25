@@ -2,12 +2,29 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:io';
-import '../setting/userprofileinfo.dart';
+
+class UserProfile {
+  final String userId;
+  final String nickname;
+  final String? department;
+  final String? profileImageUrl;
+  final String? fcmToken;
+
+  UserProfile({
+    required this.userId,
+    required this.nickname,
+    this.department,
+    this.profileImageUrl,
+    this.fcmToken,
+  });
+}
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   User? _user;
   UserProfile? _userProfile;
 
@@ -51,11 +68,15 @@ class AuthProvider with ChangeNotifier {
         profileImageUrl = await ref.getDownloadURL();
       }
 
+      // Get the FCM token
+      String? fcmToken = await _fcm.getToken();
+
       _userProfile = UserProfile(
         userId: email,
         nickname: nickname,
         department: department,
         profileImageUrl: profileImageUrl,
+        fcmToken: fcmToken,
       );
 
       await _firestore.collection('users').doc(email).set({
@@ -63,6 +84,7 @@ class AuthProvider with ChangeNotifier {
         'department': _userProfile!.department,
         'userId': _userProfile!.userId,
         'profileImageUrl': _userProfile!.profileImageUrl,
+        'fcmToken': _userProfile!.fcmToken,
       });
 
       notifyListeners();
@@ -96,17 +118,35 @@ class AuthProvider with ChangeNotifier {
     if (_user != null) {
       DocumentSnapshot doc =
           await _firestore.collection('users').doc(_user!.email).get();
-      if (doc.exists) {
+      final data = doc.data() as Map<String, dynamic>?; // Add this line
+      if (data != null) {
         _userProfile = UserProfile(
           userId: doc.id,
-          nickname: doc['nickname'],
-          department: doc['department'],
-          profileImageUrl: doc['profileImageUrl'], // Fixed here
+          nickname: data['nickname'],
+          department: data['department'],
+          profileImageUrl: data['profileImageUrl'],
+          fcmToken: data.containsKey('fcmToken')
+              ? data['fcmToken']
+              : null, // Check if 'fcmToken' exists
         );
       } else {
         _userProfile = null;
       }
       notifyListeners();
+    }
+  }
+
+  // Function to update existing user documents with FCM token
+  Future<void> updateUserDocuments() async {
+    final users = await _firestore.collection('users').get();
+    for (var user in users.docs) {
+      final data = user.data();
+      if (!data.containsKey('fcmToken')) {
+        String? fcmToken = await _fcm.getToken();
+        await user.reference.update({
+          'fcmToken': fcmToken,
+        });
+      }
     }
   }
 }

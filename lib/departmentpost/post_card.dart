@@ -34,8 +34,8 @@ class PostCard extends StatelessWidget {
       timestampString = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
     }
 
-    List<String> imageUrls = List<String>.from(postData['image_urls']);
-    String department = postData['department'];
+    List<String> imageUrls = List<String>.from(postData['image_urls'] ?? []);
+    String department = postData['department'] ?? 'Unknown';
     int currentPage = provider.getCurrentPage(department, postId);
 
     bool canViewAndEdit = provider.currentUserDepartment == department;
@@ -113,6 +113,12 @@ class PostCard extends StatelessWidget {
                                   child: Image.network(
                                     imageUrl,
                                     fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        'images/ndb.jpg',
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
                                   ),
                                 ),
                               );
@@ -138,7 +144,7 @@ class PostCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
-                postData['title'],
+                postData['title'] ?? 'No title',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -149,7 +155,7 @@ class PostCard extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
               child: ExpandableText(
-                text: postData['content'],
+                text: postData['content'] ?? 'No content',
                 style: const TextStyle(fontSize: 16),
               ),
             ),
@@ -171,7 +177,7 @@ class PostCard extends StatelessWidget {
                     style: TextStyle(fontSize: 14),
                   ),
                   Text(
-                    postData['status'],
+                    postData['status'] ?? 'Unknown',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -263,7 +269,7 @@ class PostCard extends StatelessWidget {
                     )
                   : const SizedBox.shrink(),
             ),
-            if (currentUser!.uid == authorUid)
+            if (currentUser != null && currentUser!.uid == authorUid)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
@@ -288,7 +294,7 @@ class PostCard extends StatelessWidget {
     );
   }
 
-  Color getStatusTextColor(String status) {
+  Color getStatusTextColor(String? status) {
     switch (status) {
       case '접수중':
         return Colors.green;
